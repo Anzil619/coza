@@ -1,0 +1,213 @@
+ {% extends 'base.html' %}
+ {% load static %}
+{% block content %} 
+
+<div style="height: 100px;">
+
+</div>
+{% comment %} <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card"> 
+        <div class="card-body">
+            <h4 class="card-title">Order</h4>
+
+
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th> id</th>
+                  <th> name </th>
+                  <th> price </th>
+                  <th> Quantity </th>
+                  <th> Total </th>
+                  <th> Payment method </th>
+                  <th> Tracking no</th>
+                  <th> status </th>
+                  <th> Action </th>
+    
+          
+                </tr>
+              </thead>
+              <tbody>
+                   {% for odritem in orderitems%}
+                <tr>
+
+                <td><img class="tbl-thumb" src="{{odritem.product.images.url}}" style="height: 70px;width: 70px;" alt="Product Image" /></td>
+                  <td>{{ odritem.product.product_name }}</td>
+                  <td> ₹{{odritem.product.price}}</td>
+                  <td> {{odritem.quantity}}</td>
+                  <td> ₹{{odritem.order.total_price}}</td>
+                  <td> {{odritem.order.payment_mode}} </td>
+                  <td> {{odritem.order.tracking_no}} </td>
+                  <td>{% if odritem.status == 'Order Confirmed' %}
+                    <span class="badge p-2 my-2 text-warning" style="font-size: medium;">{{odritem.status}}</span>
+                    {% elif odritem.status == 'Shipped' %}
+                    <span class="badge p-2 my-2 text-primary" style="font-size: medium;">{{odritem.status}}</span>
+                    {% elif odritem.status == 'Out for delivery' %}
+                    <span class="badge p-2 my-2 text-primary" style="font-size: medium;">{{odritem.status}}</span>
+                    {% elif odritem.status == 'Delivered' %}
+                    <span class="badge p-2 my-2 text-secondary" style="font-size: medium;">{{odritem.status}}</span>
+                    {% elif odritem.status == 'Cancelled' or 'Returned' %}
+                    <span class="badge p-2 my-2 text-danger" style="font-size: medium;">{{odritem.status}}</span>
+                    {% endif %}
+                </td>
+
+                <td><!-- Button trigger modal -->
+                   {% if odritem.status == 'Delivered' %}
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal1{{forloop.counter}}">
+    Return
+</button>
+
+<div class="modal fade mt-5" id="exampleModal1{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Return Order</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'order_return' odritem.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="orderid" value="{{odritem.order.id}}">
+                    
+                    <div class="mb-3">
+                        <label for="return_reason" class="form-label">Return Reason:</label>
+                        <select class="form-select" name="return_reason" id="return_reason">
+                            <option value="Damaged Products">Damaged Products</option>
+                            <option value="Wrong item">Wrong item</option>
+                            <option value="Poor Quality">Poor Quality</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="return_comment" class="form-label">Return Comment:</label>
+                        <textarea class="form-control" name="return_comment" id="return_comment" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    {% else %}
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{forloop.counter}}">
+                      Cancel
+                    </button>
+                     
+                    <!-- Modal  for delete the product -->
+                    <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Cancel Order {{odritem.product.product_name }}
+                          </div>
+                          <div class="modal-footer">
+                            <form action="{% url 'ordercancel' odritem.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="orderid" value="{{odritem.order.id}}">
+                              <button type="submit" class="btn btn-danger">Confirm</button>
+                            </form>
+                            <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                <!--deleting ended-->
+                
+                </td>
+                <td> {% if odritem.status == 'Delivered' %}
+                    <button type="button" class="btn btn-outline-dark">View Order</button>
+                    {% else %}
+                    <a href="{% url 'single_order_details' odritem.id %}" type="button" class="btn btn-outline-dark">Track Your order</a>
+                    {% endif %}
+                </td>
+            </tr>
+  {% endfor %}
+                
+  
+              </tbody>
+            </table>
+          </div>
+        </div>
+   </div>   {% endcomment %}
+   <style>
+    @media only screen and (max-width: 456px) {
+      .cards{
+        width: 344px;
+        margin-left: 14px;
+      }
+    }
+    @media only screen and (max-width: 767px) {
+        .btn {
+            font-size: 12px; 
+            padding: 5px 10px;
+        }
+    }
+  </style>
+  <!-- <link rel="stylesheet" type="text/css" href="{%static 'stylesSifan.min.css'%}"> -->
+
+{% comment %} <link rel="stylesheet" type="text/css" href="{%static 'single/css/util.css'%}">
+<link rel="stylesheet" type="text/css" href="{%static 'single/css/main.css'%}"> {% endcomment %}
+<!-- ajax -->
+<link rel="stylesheet" type="text/css" href="{%static 'lastStyle.css'%}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/alertify.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs/build/css/themes/default.min.css" />
+<!-- ajax end-->
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+<!-- Shopping Cart Section Begin -->
+<div class="container-fluid">
+<section class="shopping_cart_table spad cartdata cards">
+    <div class="container">
+        <div class="row ">
+            <table class="product_data">
+                <thead>
+                    <tr style="font-size: 20px;color: #000;">
+                        <th>Order_date</th>
+                        <th>Total</th>
+                        <th>Tracking id</th>
+                        <th>Action</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody style="line-height: 80px;">        
+                  {% for orders in orders %}
+                  <tr class="">
+                      <td style="font-size: 17px;">{{ orders.created_at }}</td>
+                      <td class="cart__price total">₹{{ orders.total_price|floatformat:2 }}</td>
+                      <td style="font-size: 17px;">{{ orders.tracking_no }}</td>
+                      <td><a href="{% url 'single_order_details' orders.id %}" class="btn btn-outline-dark">View order details</a></td>
+                  </tr>
+                  {% endfor %}
+                  
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 mt-4">
+                <div class="continue__btn">
+                    <a href="">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    
+     
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
