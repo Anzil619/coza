@@ -177,9 +177,9 @@ def add_product(request):
                 return redirect(product_list)
             else:
                 pass
-        if image or image1 or image2 or image3 == None:
-            messages.error(request, 'image field is empty')
-            return redirect('product_list')
+        # if image or image1 or image2 or image3 == None:
+        #     messages.error(request, 'image field is empty')
+        #     return redirect('product_list')
 
         try:
             cat = Category.objects.get(category_name=category)
