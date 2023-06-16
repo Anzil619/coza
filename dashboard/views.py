@@ -18,8 +18,8 @@ from accounts.models import CustomUser
 # Create your views here.
 def adminlogin(request):
 
-    if 'email' in request.session:
-        return redirect('dashboard')
+    
+
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -44,8 +44,8 @@ def adminlogin(request):
 @login_required(login_url='adminlogin')
 # Create your views here.
 def dashboard(request):
-    # if not request.user.is_superuser:
-    #     return redirect('adminlogin')
+    if not request.user.is_superuser:
+        return redirect('adminlogin')
 
     delivered_items = OrderItem.objects.filter(status='Delivered')
 
@@ -79,12 +79,6 @@ def dashboard(request):
     return render(request,'dashboard/admin_home.html',context)
 
 
-# def dashboard(request):
-#     userss = CustomUser.objects.get(email=request.user) 
-#     context ={
-#         'user' : userss,
-#     }
-#     return render (request,'dashboard/admin_home.html',context)
 
 def users(request):
     users = CustomUser.objects.all()
@@ -158,6 +152,8 @@ def add_product(request):
         print(category,'sifan')
         sub_category = request.POST.get('sub_category')
 
+        # validation product already exist
+
         if Product.objects.filter(product_name=product_name).exists():
             messages.error(request, 'Product name already exist')
             return redirect('add_product')
@@ -167,19 +163,30 @@ def add_product(request):
             messages.error(request,"name field are empty")
             return redirect('product_list')
         
+
+        try:
+            check_number = int(price)
+            check_number = int(stock)
+        except:
+            messages.info(request,'number field got unexpected values')
+            return redirect('product_list')
         
-        #validation for product price and stoc less than zero
+        #validation for product price and stock less than zero
 
         check_pos =[int(price),int(stock)]
         for value in check_pos:
             if value < 0 or value == '':
                 messages.info(request,'price and quantity should be positive number')
-                return redirect(product_list)
+                return redirect('product_list')
             else:
                 pass
-        # if image or image1 or image2 or image3 == None:
-        #     messages.error(request, 'image field is empty')
-        #     return redirect('product_list')
+
+        if image or image1 or image2 or image3 == None:
+            messages.error(request, 'image field is empty')
+            return redirect('product_list')
+
+       
+
 
         try:
             cat = Category.objects.get(category_name=category)

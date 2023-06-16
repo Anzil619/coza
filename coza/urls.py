@@ -32,4 +32,7 @@ urlpatterns = [
     path('order/', include('order.urls')),
     path('userprofile/', include('userprofile.urls')),
     path('wishlist/', include('wishlist.urls')),
+    path('extras/', include('extras.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=MEDIA_ROOT)
+handler404 = 'home.views.error_404_view'

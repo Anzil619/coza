@@ -342,7 +342,10 @@ def coupons(request):
 
 
 def single_order_details(request,id):
-    order = Order.objects.get(id=id)
+    try:
+        order = Order.objects.get(id=id)
+    except Order.DoesNotExist:
+        return redirect('orders')
     address_id=order.address.id
     address = Address.objects.get(id=address_id)
     print(address,"aami")

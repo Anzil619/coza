@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-5bw5!!-b9rnni6=0(4wja#ely7_e*7e-(nfnl6vuuqf87s9x)+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'userprofile',
     'wishlist',
     'mathfilters',
+    'extras',
 ]
 
 MIDDLEWARE = [

@@ -9,7 +9,7 @@
       <div class="card-body">
         <h4 class="card-title">Products</h4>
         
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal">Add Product</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal">Add Sub Category</button>
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -25,12 +25,9 @@
                         {% csrf_token %}
                           <div class="form-group">
                               <label for="productName"> Sub category name</label>
-                              <input type="text" class="form-control" id="productName" name="sub_category_name" placeholder="Enter product name">
+                              <input type="text" class="form-control" id="productName" name="sub_category_name" placeholder="Enter sub category name">
                           </div>
-                          {% comment %} <div class="form-group">
-                            <label for="productName">slug</label>
-                            <input type="text" class="form-control" id="productName" name="slug" placeholder="Enter product name">
-                        </div> {% endcomment %}
+                          
                         <div class="form-group">
                             <label for="productStatus">category</label>
                             <select class="form-control" id="productStatus" name="category">
