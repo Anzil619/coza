@@ -372,7 +372,7 @@
             </li> {% endcomment %}
             <li class="nav-item sidebar-user-actions">
               <div class="sidebar-user-menu">
-                <a href="#" class="nav-link"><i class="mdi mdi-logout menu-icon"></i>
+                <a href="{% url 'adminlogout' %}" class="nav-link"><i class="mdi mdi-logout menu-icon"></i>
                   <span class="menu-title">Log Out</span></a>
               </div>
             </li>
@@ -388,7 +388,7 @@
 
        
 
-        <footer class="footer">
+        <footer class="">
             <div class="footer-inner-wraper">
               <div class="d-sm-flex justify-content-center justify-content-sm-between">
                 {% comment %} <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>

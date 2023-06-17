@@ -19,8 +19,6 @@ def wishlist(request):
 
     
 
-
-
 def addWishlist(request):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -39,6 +37,8 @@ def addWishlist(request):
         else:
             return JsonResponse({'status' : "Login to continue"})
     return redirect('/')
+
+
 
 def deletewishlist(request):
     if request.method == 'POST':

@@ -5,11 +5,8 @@
 
 {% comment %} <div class="col-lg-12 grid-margin stretch-card">
     <div class="card"> {% endcomment %}
-      <div class="card-body">
-        <h4 class="card-title">Bordered table</h4>
-        <p class="card-description"> Add class <code>.table-bordered</code>
-        </p>
-      
+      <div class="card-body table-responsive">
+        <h4 class="card-title">Users</h4>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -33,7 +30,7 @@
               <td> {{i.phone}}</td>
               <td> {{i.email}} </td>
               <!-- Modal for blocking user -->
-<div class="modal fade" id="blockUserModal" tabindex="-1" role="dialog" aria-labelledby="blockUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="blockUserModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="blockUserModalLabel{{i.id}}" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -54,7 +51,7 @@
 </div>
 
 <!-- Modal for unblocking user -->
-<div class="modal fade" id="unblockUserModal" tabindex="-1" role="dialog" aria-labelledby="unblockUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="unblockUserModal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="unblockUserModalLabel{{i.id}}" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -79,12 +76,12 @@
   {% if i.is_active %}
     Active
     <td>
-      <button class="btn btn-primary me-2" data-toggle="modal" data-target="#blockUserModal">Block</button>
+      <button class="btn btn-primary me-2" data-toggle="modal" data-target="#blockUserModal{{i.id}}">Block</button>
     </td>
   {% else %}
     Blocked
     <td>
-      <button class="btn btn-primary me-2" data-toggle="modal" data-target="#unblockUserModal">Unblock</button>
+      <button class="btn btn-primary me-2" data-toggle="modal" data-target="#unblockUserModal{{i.id}}">Unblock</button>
     </td>
   {% endif %}
 </td>

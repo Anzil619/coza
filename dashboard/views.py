@@ -6,6 +6,7 @@ from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
+from userprofile.models import Address
 from order.models import Order, OrderItem
 from dashboard.forms import ProductForm
 from store.models import Product, Variation
@@ -17,9 +18,6 @@ from accounts.models import CustomUser
 
 # Create your views here.
 def adminlogin(request):
-
-    
-
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -156,7 +154,7 @@ def add_product(request):
 
         if Product.objects.filter(product_name=product_name).exists():
             messages.error(request, 'Product name already exist')
-            return redirect('add_product')
+            return redirect('product_list')
         
 
         if product_name == '':
@@ -193,14 +191,16 @@ def add_product(request):
         except Category.DoesNotExist:
     # Handle the case when the category does not exist
             messages.error(request, 'Invalid category')
-            return redirect('users')
+            return redirect('product_list')
 
         try:
            sub_cate = Sub_Category.objects.get(sub_category_name=sub_category)
         except Sub_Category.DoesNotExist:
     # Handle the case when the sub-category does not exist
             messages.error(request, 'Invalid sub-category')
-            return redirect('add_product')
+            return redirect('product_list')
+        
+
 
         new = Product.objects.create(
                 product_name=product_name,
@@ -442,7 +442,8 @@ def sub_category_edit(request,sub_id):
 
 
 def order_management(request):
-    order = OrderItem.objects.all()
+    order_items = OrderItem.objects.all()
+    order = Order.objects.all()
 
 
     context = {
@@ -451,6 +452,26 @@ def order_management(request):
 
     return render(request, 'dashboard/admin_order_list.html',context)
 
+def admin_single_order(request,id):
+    try:
+        order = Order.objects.get(id=id)
+    except Order.DoesNotExist:
+        return redirect('order_management')
+    address_id=order.address.id
+    address = Address.objects.get(id=address_id)
+    print(address,"aami")
+    order_items = OrderItem.objects.filter(order_id=id)
+    print(order_items,"aami")
+
+    context ={
+        'order_item' : order_items,
+        'address'    : address,
+        'order'   : order,
+    }
+
+    return render (request, 'dashboard/single_order_admin.html', context)
+
+
 def update_order(request, id):
   if request.method == "POST":
     order_item = get_object_or_404(OrderItem, id=id)
@@ -458,7 +479,7 @@ def update_order(request, id):
     order_item.status = status 
     order_item.save()
     
-    return redirect('order_management')
+    return redirect('admin_single_order',id)
 
     
 
@@ -469,6 +490,7 @@ def coupon_management(request):
         'coupon' : coupon
     }
     return render(request, 'dashboard/admin_coupon.html',context)
+
 
 def add_coupon(request):
     if request.method == "POST":
