@@ -29,7 +29,8 @@ urlpatterns = [
     path('delete_coupon/<int:coupon_id>/', views.delete_coupon, name='delete_coupon'),
     path('variants/', views.variants, name='variants'),
     path('add_variants/', views.add_variants, name='add_variants'),
-    path('edit_variants/<int:id>/', views.edit_variants, name='edit_variants'),
+    # path('edit_variants/<int:id>/', views.edit_variants, name='edit_variants'),
+    path('delete_variants/<int:id>/', views.delete_variants, name='delete_variants'),
     path('admin_single_order/<int:id>/', views.admin_single_order, name='admin_single_order'),
 
 ]

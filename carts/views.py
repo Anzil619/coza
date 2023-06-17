@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from .models import Product, Variation, Cart, CartItem
 from django.contrib.auth.decorators import login_required
-
+from wishlist.models import Wishlist
 
 # Create your views here.
 def _cart_id(request):
@@ -81,7 +81,9 @@ def add_cart(request, product_id):
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+
         
+            
         return redirect('cart')
 
 
@@ -149,7 +151,9 @@ def add_cart(request, product_id):
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+
         
+            
         return redirect('cart')
 
 

@@ -95,7 +95,7 @@
               <td> {{i.is_active}}</td>
               
               
-              <td> <a class="btn btn-danger me-2" href="" role="button">delete</
+              <td> <a class="btn btn-danger me-2" href="{% url 'delete_variants' i.id %}" role="button">delete</
                 a> </td>
               <td> <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#productModal2{{forloop.counter}}">edit</button> </td>
               

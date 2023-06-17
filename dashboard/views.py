@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_control
 from userprofile.models import Address
 from order.models import Order, OrderItem
 from dashboard.forms import ProductForm
-from store.models import Product, Variation
+from store.models import Product, Variation,PriceFilter
 from category.models import Category,Sub_Category
 from django.db.models.functions import TruncDay,Cast
 from order.models import Coupon, UserCoupon
@@ -179,9 +179,11 @@ def add_product(request):
             else:
                 pass
 
-        if image or image1 or image2 or image3 == None:
-            messages.error(request, 'image field is empty')
-            return redirect('product_list')
+        
+        
+        # if image or image1 or image2 or image3 == None:
+        #     messages.error(request, 'image field is empty')
+        #     return redirect('product_list')
 
        
 
@@ -200,7 +202,8 @@ def add_product(request):
             messages.error(request, 'Invalid sub-category')
             return redirect('product_list')
         
-
+        price_rannge = PriceFilter.objects.get(id=1)
+        
 
         new = Product.objects.create(
                 product_name=product_name,
@@ -212,7 +215,8 @@ def add_product(request):
                 image3=image3,
                 category=cat,
                 sub_category=sub_cate,
-                description=description
+                description=description,
+                price_range = price_rannge
         )
 
         
@@ -576,5 +580,13 @@ def add_variants(request):
 
         return redirect('variants')
     
-def edit_variants(request,id):
-    pass
+# def edit_variants(request,id):
+#     pass
+
+
+
+
+def delete_variants(request, id):
+    variants = Variation.objects.get(id=id)
+    variants.delete()
+    return redirect('variants')
