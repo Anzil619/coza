@@ -7,42 +7,41 @@
 {% comment %} <div class="col-lg-12 grid-margin stretch-card">
     <div class="card"> {% endcomment %}
       <div class="card-body table-responsive">
-        <h4 class="card-title">Coupon Management</h4>
+        <h4 class="card-title">offer Management</h4>
         
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal">Add Coupon</button>
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title" id="productModalLabel">Add Coupon</h5>
+                      <h5 class="modal-title" id="productModalLabel">Add offer</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
                   <div class="modal-body">
-                      <form action="{% url 'add_coupon' %}" method ="post" enctype="multipart/form-data">
+                      <form action="{% url 'add_offer' %}" method ="post" enctype="multipart/form-data">
                         {% csrf_token %}
                           <div class="form-group">
-                              <label for="productName">Coupon code</label>
-                              <input type="text" class="form-control" id="productName" name="coupon_code" placeholder="Enter coupon code">
+                              <label for="productName">Offer name</label>
+                              <input type="text" class="form-control" id="productName" name="offer_name" placeholder="Enter offer name">
                           </div>
+
                           <div class="form-group">
-                            <label for="productName">discount</label>
-                            <input type="text" class="form-control" id="productName" name="discount" placeholder="Enter coupon discount">
+                            <label for="productName">Offer description</label>
+                            <input type="text" class="form-control" id="productName" name="offer_description" placeholder="Enter description">
                         </div>
+
                         <div class="form-group">
-                          <label for="productName">Min price</label>
-                          <input type="text" class="form-control" id="productName" name="min_value" placeholder="Enter coupon min price">
+                          <label for="productName">discount</label>
+                          <input type="text" class="form-control" id="productName" name="offer_discount" placeholder="Enter discount">
                       </div>
                       <div class="form-group">
                         <label for="productName">Expiry Date</label>
-                        <input type="date" class="form-control" id="productName" name="valid_till" placeholder="Enter coupon expiry date">
-                    </div>
-                    <div class="form-group ms-4">
-                      <input type="checkbox" class="form-check-input" id="availabilityCheckbox" name="is_available" value="True">
-                      <label class="form-check-label pt-2" for="availabilityCheckbox">Available</label>
+                        <input type="date" class="form-control" id="productName" name="valid_till" placeholder="Enter expiry date">
                     </div>
                   
+
                   </div>
 
                   <div class="modal-footer">
@@ -60,12 +59,12 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th> ID</th>
-              <th> Coupon Code </th>
+              <th> offer name</th>
+              <th> offer decription </th>
               <th> Discount </th>
-              <th> Min Price </th>
+           
               <th> Expiry date </th>
-              <th> Available</th>
+              
               <th> Action </th>
               
 
@@ -73,16 +72,15 @@
             </tr>
           </thead>
           <tbody>
-            {% for i in coupon %}
+            {% for i in offer %}
             <tr>
               
-              <td> {{i.id}} </td>
-              <td> {{i.code}}</td>
-              <td> {{i.discount}}</td>
-              <td> {{i.min_value}}</td>
+              <td> {{i.offer_name}} </td>
+              <td> {{i.offer_description}}</td>
+              <td> {{i.offer_discount}}</td>
               <td> {{i.valid_till}} </td>
-              <td> {{i.active}} </td>
-              <td> <a class="btn btn-danger me-2" href="{% url 'delete_coupon' i.id%}" role="button">delete</a> </td>
+        
+              <td> <a class="btn btn-danger me-2" href="{% url 'delete_offer' i.id%}" role="button">delete</a> </td>
               <td> <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#productModal2{{forloop.counter}}">edit</button> </td>
               
               <div class="modal fade" id="productModal2{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
@@ -95,41 +93,29 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{% url 'edit_coupon' i.id %}" method ="post" enctype="multipart/form-data">
+                            <form action="{% url 'editoffer' i.id %}" method ="post" enctype="multipart/form-data">
                               {% csrf_token %}
                               <div class="form-group">
-                                <label for="productName">Coupon code</label>
-                                <input type="text" class="form-control" id="productName" name="coupon_code" placeholder="Enter product name" value="{{i.code}}">
+                                <label for="productName">offer name </label>
+                                <input type="text" class="form-control" id="productName" name="offer_name" placeholder="Enter product name" value="{{i.offer_name}}">
                             </div>
                             <div class="form-group">
-                              <label for="productName">discount</label>
-                              <input type="text" class="form-control" id="productName" name="discount" placeholder="Enter product name" value="{{i.discount}}">
+                              <label for="productName">description</label>
+                              <input type="text" class="form-control" id="productName" name="offer_description" placeholder="Enter product name" value="{{i.offer_description}}">
                           </div>
                           <div class="form-group">
-                            <label for="productName">Min price</label>
-                            <input type="text" class="form-control" id="productName" name="min_value" placeholder="Enter product name" value="{{i.min_value}}">
+                            <label for="productName">offer discount</label>
+                            <input type="text" class="form-control" id="productName" name="offer_discount" placeholder="Enter product name" value="{{i.offer_discount}}">
                         </div>
                         <div class="form-group">
                           <label for="productName">Expiry Date</label>
                           <input type="date" class="form-control" id="dateeee" name="valid_till" placeholder="Enter product name" value="{{i.valid_till}}">
-                          <script>
-                            // Get the date input element
-                            const dateInput = document.getElementById('dateeee');
                           
-                            // Get the value from the server-side variable `i.valid_till`
-                            const validTill = "{{i.valid_till}}"; // Replace with the actual server-side variable
-                          
-                            // Convert the date value to a Date object
-                            const date = new Date(validTill);
-                          
-                            // Format the date as "YYYY-MM-DD" for setting the input field value
-                            const formattedDate = date.toISOString().slice(0, 10);
-                          
-                            // Set the formatted date as the value of the input field
-                            dateInput.value = formattedDate;
-                          </script>
                         </div>
-                   
+                      <div class="form-group ms-4">
+                        <input type="checkbox" class="form-check-input" id="availabilityCheckbox" name="is_available" value="{{i.active}}">
+                        <label class="form-check-label pt-2" for="availabilityCheckbox">Available</label>
+                      </div>
                     
 
                       </div>

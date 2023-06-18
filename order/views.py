@@ -135,8 +135,8 @@ def placeorder(request):
         if (payment_mode== 'wallet_payment'):
             
             wallet = CustomUser.objects.get(email=request.user)
-            if cart_total_price>=wallet.wallet:
-               messages.error(request, 'Item cancellation failed')
+            if float(cart_total_price) >= float(wallet.wallet):
+               messages.error(request, 'Wallet does not have the required amount')
                return redirect(checkout)
             wallet.wallet -= cart_total_price
             wallet.save()

@@ -59,6 +59,26 @@
                                 
                             </select>
                         </div>
+                        <div class="form-group">
+                          <label for="productCategory">Price Range</label>
+                          <select class="form-control" id="productCategory" name="price_range">
+                             
+                             {% for i in price_range %}
+                             <option value="{{i.price_range}}">{{i.price_range}}</option>
+                             {% endfor %}
+                                 
+                          </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="productCategory">offer</label>
+                        <select class="form-control" id="productCategory" name="offer">
+                          <option value="" disabled selected>Choose an option</option>
+                           {% for i in offer %}
+                           <option value="{{i.offer_name}}">{{i.offer_name}}</option>
+                           {% endfor %}
+                               
+                        </select>
+                    </div>
                           
                           <div class="form-group">
                               <label for="productImages">Product Image </label>
@@ -180,27 +200,46 @@
                                 <div class="form-group">
                                     <label for="productCategory">Category</label>
                                     <select class="form-control" id="productCategory" name="category">
-                                       
+                                      
                                        {% for i in category %}
                                        <option value="{{i.category_name}}">{{i.category_name}}</option>
-                                       {% endfor %}
-                                           
-                                      
-                                        
+                                       {% endfor %}  
                                     </select>
                                 </div>
+
                                 <div class="form-group">
-                                  <label for="productCategory">Category</label>
+                                  <label for="productCategory">Sub Category</label>
                                   <select class="form-control" id="productCategory" name="sub_category">
                                      
                                      {% for i in sub_category %}
                                      <option value="{{i.sub_category_name}}">{{i.sub_category_name}}</option>
                                      {% endfor %}
-                                         
-                                    
-                                      
+                                  
                                   </select>
                               </div>
+
+                              <div class="form-group">
+                                <label for="productCategory">Price Range</label>
+                                <select class="form-control" id="productCategory" name="price_range">
+                                   
+                                   {% for i in price_range %}
+                                   <option value="{{i.price_range}}">{{i.price_range}}</option>
+                                   {% endfor %}
+                                       
+                                </select>
+                            </div>
+                              <div class="form-group">
+                                <label for="productCategory">offer</label>
+                                <select class="form-control" id="productCategory" name="offer">
+                                   <option selected disabled value="">choose an option</option>
+                                   {% for i in offer %}
+              
+                                   <option value="{{i.offer_name}}">{{i.offer_name}}</option>
+                                   {% endfor %}
+                                       
+                                </select>
+                            </div>
+                              
                               <div style="width: 100px;" class="card-header category-img position-relative overflow-hidden bg-transparent border p-0">
                                 <img class="img-fluid w-100" src="{{i.images.url}} " alt="">
                               </div>

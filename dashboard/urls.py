@@ -29,8 +29,17 @@ urlpatterns = [
     path('delete_coupon/<int:coupon_id>/', views.delete_coupon, name='delete_coupon'),
     path('variants/', views.variants, name='variants'),
     path('add_variants/', views.add_variants, name='add_variants'),
+    
     # path('edit_variants/<int:id>/', views.edit_variants, name='edit_variants'),
     path('delete_variants/<int:id>/', views.delete_variants, name='delete_variants'),
     path('admin_single_order/<int:id>/', views.admin_single_order, name='admin_single_order'),
-
+    path('price_range/', views.price_range, name='price_range'),
+    path('add_price_range/', views.add_price_range, name='add_price_range'),
+    path('delete_price_range/<int:id>/', views.delete_price_range, name='delete_price_range'),
+    path('edit_price_range/<int:id>/', views.edit_price_range, name='edit_price_range'),
+    
+    path('offer_managment/', views.offer_managment, name='offer_managment'),
+    path('add_offer/', views.add_offer, name='add_offer'),
+    path('editoffer/<int:offer_id>/', views.editoffer, name='editoffer'),
+    path('delete_offer/<int:id>/', views.delete_offer, name='delete_offer'),
 ]

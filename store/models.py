@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from category.models import Category, Sub_Category
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.utils.text import slugify
 
 
 # Create your models here.
@@ -52,6 +53,12 @@ class Product(models.Model):
     created_date = models.DateField(auto_now_add=True)
     modified_data= models.DateField(auto_now=True)
 
+
+    def save(self, *args, **kwargs):
+        # generate slug field from name field if slug is empty
+        if not self.slug:
+            self.slug = slugify(self.product_name)
+        super(Product, self).save(*args, **kwargs)
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.slug, self.slug])

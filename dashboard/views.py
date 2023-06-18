@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+import re
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.models import auth
@@ -9,7 +10,7 @@ from django.views.decorators.cache import cache_control
 from userprofile.models import Address
 from order.models import Order, OrderItem
 from dashboard.forms import ProductForm
-from store.models import Product, Variation,PriceFilter
+from store.models import Product, Variation,PriceFilter,ProductOffer
 from category.models import Category,Sub_Category
 from django.db.models.functions import TruncDay,Cast
 from order.models import Coupon, UserCoupon
@@ -112,12 +113,16 @@ def product_list(request):
         products = Product.objects.all()
         categories = Category.objects.all()
         sub_categories = Sub_Category.objects.all()
-
+        offer =  ProductOffer.objects.all()
+        price_range = PriceFilter.objects.all()
+        print(price_range,"daxo")
         
         context = {
             'products' : products,
             'category' : categories,
             'sub_category' : sub_categories,
+            'offer' : offer,
+            'price_range' : price_range,
         }
         return render(request, 'dashboard/product_list.html',context)
     else:
@@ -133,10 +138,16 @@ def product_delete(request, id):
 def add_product(request):
     categories = Category.objects.all()
     sub_categories = Sub_Category.objects.all()
+    offer =  ProductOffer.objects.all()
+    price_range = PriceFilter.objects.all()
+    
     context = {
             'category' : categories,
             'sub_category' : sub_categories,
+            'offer'        : offer,
+            'price_range'  : price_range,
         }
+    
     if request.method == "POST":
         product_name = request.POST['product_name']
         stock = request.POST['stock']
@@ -147,10 +158,13 @@ def add_product(request):
         image2 = request.FILES.get('image2', None)
         image3 = request.FILES.get('image3',None)
         category = request.POST.get('category')
+        offer_name  = request.POST.get('offer')
+        price_ranges  = request.POST.get('price_range')
         print(category,'sifan')
         sub_category = request.POST.get('sub_category')
 
         # validation product already exist
+
 
         if Product.objects.filter(product_name=product_name).exists():
             messages.error(request, 'Product name already exist')
@@ -159,6 +173,11 @@ def add_product(request):
 
         if product_name == '':
             messages.error(request,"name field are empty")
+            return redirect('product_list')
+        
+        
+        if not re.search('[a-zA-Z]', product_name):
+            messages.error(request, 'Product name should contain at least one alphabet')
             return redirect('product_list')
         
 
@@ -180,17 +199,15 @@ def add_product(request):
                 pass
 
         
-        
-        # if image or image1 or image2 or image3 == None:
-        #     messages.error(request, 'image field is empty')
-        #     return redirect('product_list')
-
-       
+        if image is None or image1 is None or image2 is None or image3 is None:
+            messages.error(request, 'Image field is empty.')
+            return redirect('product_list')
 
 
         try:
             cat = Category.objects.get(category_name=category)
         except Category.DoesNotExist:
+
     # Handle the case when the category does not exist
             messages.error(request, 'Invalid category')
             return redirect('product_list')
@@ -198,12 +215,13 @@ def add_product(request):
         try:
            sub_cate = Sub_Category.objects.get(sub_category_name=sub_category)
         except Sub_Category.DoesNotExist:
+
     # Handle the case when the sub-category does not exist
             messages.error(request, 'Invalid sub-category')
             return redirect('product_list')
         
-        price_rannge = PriceFilter.objects.get(id=1)
-        
+
+        price_range = PriceFilter.objects.get(price_range=price_ranges)
 
         new = Product.objects.create(
                 product_name=product_name,
@@ -216,16 +234,23 @@ def add_product(request):
                 category=cat,
                 sub_category=sub_cate,
                 description=description,
-                price_range = price_rannge
+                price_range = price_range,
+                
         )
 
-        
+        try:
+            offers=ProductOffer.objects.get(offer_name=offer_name)
+            new.offer = offers
+            new.save()
+        except:
+            pass
+
+
         new.is_available=True
         new.save()
 
         return redirect('product_list')
     
-
     return render(request, 'dashboard/product_list.html',context)
 
     
@@ -246,19 +271,42 @@ def product_edit(request, product_id):
         image1 = request.FILES.get('image1')
         image2 = request.FILES.get('image2')
         image3 = request.FILES.get('image3')
+        offer_name  = request.POST.get('offer')
+        price_ranges  = request.POST.get('price_range')
         category = request.POST.get('category')
         sub_category = request.POST.get('sub_category')
 
         if Product.objects.filter(product_name=product_name).exclude(id=product_id).exists():
             messages.error(request, 'Product name already exists')
-            return redirect('add_product')
+            return redirect('product_list')
 
         if not (product_name and price):
             messages.error(request, "Name or price field is empty")
             return redirect('product_list')
 
+        if not re.search('[a-zA-Z]', product_name):
+            messages.error(request, 'Product name should contain at least one alphabet')
+            return redirect('product_list')
+        
+        try:
+            check_number = int(price)
+            check_number = int(stock)
+        except:
+            messages.info(request,'number field got unexpected values')
+            return redirect('product_list')
+        
+        check_pos =[int(price),int(stock)]
+        for value in check_pos:
+            if value < 0 or value == '':
+                messages.info(request,'price and quantity should be positive number')
+                return redirect('product_list')
+            else:
+                pass
+        
+        
         cat = get_object_or_404(Category, category_name=category)
         sub_cate = get_object_or_404(Sub_Category, sub_category_name=sub_category)
+        price_range = PriceFilter.objects.get(price_range=price_ranges)
 
         product.product_name = product_name
         product.stock = stock
@@ -266,12 +314,17 @@ def product_edit(request, product_id):
         product.description = description
         product.category = cat
         product.sub_category = sub_cate
+        product.price_range = price_range
         product.is_available = True
 
+        try:
+            offers=ProductOffer.objects.get(offer_name=offer_name)
+            product.offer = offers
+        except:
+            pass
         
         if image:
             product.images = image
-        
         if image1:
             product.image1 = image1
         if image2:
@@ -288,6 +341,7 @@ def product_edit(request, product_id):
         'sub_category': sub_categories,
         'product': product,
     }
+
     return render(request, 'dashboard/product_list.html', context)
 
 
@@ -316,6 +370,10 @@ def add_category(request):
             messages.error(request,"name or slug field are empty")
             return redirect('category_list')
         
+        if not re.search('[a-zA-Z]', category_name):
+            messages.error(request, 'category name should contain at least one alphabet')
+            return redirect('category_list')
+            
         
 
         new = Category.objects.create(
@@ -342,8 +400,6 @@ def category_edit(request, category_id):
 
     if request.method == "POST":
         category_name = request.POST.get('category_name')
-        
-        
         description = request.POST.get('description')
         
         print(category_name)
@@ -351,8 +407,16 @@ def category_edit(request, category_id):
         if Category.objects.filter(category_name=category_name).exclude(id=category_id).exists():
             messages.error(request, 'Product name already exists')
             return redirect('add_product')
-
         
+        if category_name == '':
+            messages.error(request,"name or slug field are empty")
+            return redirect('category_list')
+        
+        if not re.search('[a-zA-Z]', category_name):
+            messages.error(request, 'category name should contain at least one alphabet')
+            return redirect('category_list')
+        
+
         category.category_name = category_name
         category.description = description
         category.save()
@@ -390,6 +454,11 @@ def add_sub_category(request):
             messages.error(request,"name field are empty")
             return redirect('sub_category_list')
         
+        
+        
+        if not re.search('[a-zA-Z]', sub_category_name):
+            messages.error(request, 'sub category name should contain at least one alphabet')
+            return redirect('sub_category_list')
         
 
         category = Category.objects.get(category_name=category_name)
@@ -504,12 +573,12 @@ def add_coupon(request):
         valid_till = request.POST.get('valid_till')
         is_available = request.POST.get('is_available')
 
-
-
         if is_available == None:
             is_available = False
 
-
+        if int(discount) >30 or int(discount) <= 0 :
+            messages.error(request,"discount percentage should be below 30 percentage and more than zero")
+            return redirect('coupon_management')
 
 
         Coupon.objects.create(
@@ -521,6 +590,8 @@ def add_coupon(request):
         )
 
         return redirect('coupon_management')
+    
+
 def edit_coupon(request, coupon_id):
     coupon = Coupon.objects.get(id=coupon_id)
     if request.method == "POST":
@@ -530,16 +601,23 @@ def edit_coupon(request, coupon_id):
         valid_till = request.POST.get('valid_till')
         is_available = request.POST.get('is_available')
 
+
         if is_available == None:
             is_available = False
+        
+        if valid_till =="":
+            valid_till = coupon.valid_till
 
+        if int(discount) >30 or int(discount) <= 0 :
+            messages.error(request,"discount percentage should be below 30 percentage and more than zero")
+            return redirect('offer_managment')
+        
         coupon.code = coupon_code
         coupon.discount = discount
         coupon.min_value = min_value
         coupon.valid_till = valid_till
         coupon.active = is_available
         coupon.save()
-
         return redirect('coupon_management')
     
 def delete_coupon(request, coupon_id):
@@ -580,8 +658,7 @@ def add_variants(request):
 
         return redirect('variants')
     
-# def edit_variants(request,id):
-#     pass
+
 
 
 
@@ -590,3 +667,110 @@ def delete_variants(request, id):
     variants = Variation.objects.get(id=id)
     variants.delete()
     return redirect('variants')
+
+def price_range(request):
+    choices = PriceFilter.FILTER_CHOICES
+    price_range=PriceFilter.objects.all()
+    
+
+    context ={
+        'price_range' : price_range,
+        'choices' : choices,
+    }
+
+    return render(request,'dashboard/price_range.html',context)
+
+def add_price_range(request):
+    if request.method == 'POST':
+        price_range = request.POST.get('price_range')
+
+        if PriceFilter.objects.filter(price_range=price_range).exists():
+            messages.error(request, 'price range already exists')
+            return redirect('price_range')
+        
+        PriceFilter.objects.create(price_range=price_range)
+    return redirect('price_range')
+
+
+def delete_price_range(request,id):
+    price_range = PriceFilter.objects.get(id=id)
+    price_range.delete()
+    return redirect('price_range')
+
+def edit_price_range(request,id):
+    price_rangee = PriceFilter.objects.get(id=id)
+    if request.method == "POST":
+        price_ranges = request.POST.get('price_range')
+
+        if PriceFilter.objects.filter(price_range=price_ranges).exclude(id=id).exists():
+            messages.error(request,"price range already exist")
+            return redirect(price_range)
+        
+        price_rangee.price_range = price_ranges
+        price_rangee.save()
+        return redirect('price_range')
+    
+def offer_managment(request):
+    offer = ProductOffer.objects.all()
+    context ={
+        'offer' : offer
+    }
+    return render(request, 'dashboard/offer_managment.html',context)
+  
+def add_offer(request):
+    if request.method == "POST":
+        offer_name = request.POST.get('offer_name')
+        offer_description = request.POST.get('offer_description')
+        discount = request.POST.get('offer_discount')
+        valid_till = request.POST.get('valid_till')
+
+        if ProductOffer.objects.filter(offer_name=offer_name).exists():
+            messages.error(request,"offer Already exist")
+            return redirect('offer_managment')
+
+        if int(discount) >30 or int(discount) <= 0 :
+            messages.error(request,"discount percentage should be below 30 percentage and more than zero")
+            return redirect('offer_managment')
+        
+        if valid_till == "":
+            messages.error(request,'date field is empty')
+            return redirect('offer_managment')
+        
+        try:
+            check_number = int(discount)
+        except:
+            messages.info(request,'discount field got unexpected values')
+            return redirect('offer_managment')
+
+        ProductOffer.objects.create(offer_name=offer_name,offer_description=offer_description,offer_discount = discount,valid_till=valid_till)
+
+        return redirect('offer_managment')
+    
+def editoffer(request,offer_id):
+    offers = ProductOffer.objects.get(id=offer_id)
+    if request.method == "POST":
+        offer_names = request.POST.get('offer_name')
+        offer_descriptions = request.POST.get('offer_description')
+        offer_discounts = request.POST.get('offer_discount')
+       
+        valid_till = request.POST.get('valid_till')
+
+        if valid_till == "":
+            valid_till=offers.valid_till
+
+        if int(offer_discounts) >30 or int(offer_discounts) <= 0 :
+            messages.error(request,"discount percentage should be below 30 percentage and more than zero")
+            return redirect('offer_managment')
+        
+
+        offers.offer_name = offer_names
+        offers.offer_discount =   offer_discounts
+        offers.offer_description = offer_descriptions
+        offers.valid_till = valid_till
+        offers.save()
+        return redirect('offer_managment')
+
+def delete_offer(request,id):
+    offer = ProductOffer.objects.get(id=id)
+    offer.delete()
+    return redirect('offer_managment')
