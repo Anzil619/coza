@@ -8,22 +8,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
-    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
 
     
-
-
-
-
-
-    {% comment %} accordian  {% endcomment %}
 <!-- CSS CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
 <!-- JavaScript Bundle CDN (includes Popper.js) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 
 
 
@@ -61,41 +52,6 @@
 
     <!-- pagiantor css -->
     
-
-
-    {% comment %} <style>
-        .card {
-          background-color: #f8f9fa;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          padding: 30px;
-          max-width: 400px;
-          margin: 0 auto;
-          margin-top: 50px;
-        }
-        
-        .card img {
-          width: 150px;
-          height: 150px;
-          border-radius: 50%;
-          object-fit: cover;
-          object-position: center;
-          margin: 0 auto;
-          margin-bottom: 20px;
-        }
-        
-        .card h4 {
-          font-size: 20px;
-          margin-bottom: 10px;
-          text-align: center;
-        }
-        
-        .card p {
-          font-size: 16px;
-          margin-bottom: 5px;
-          text-align: center;
-        }
-      </style> {% endcomment %}
 <!--===============================================================================================-->
 </head>
 
@@ -159,14 +115,13 @@
                             <a href="{% url 'store' %}">Shop</a>
                         </li>
 
-                        <!-- <li class="label1" data-label1="hot">
-                            <a href="shoping-cart.html">Features</a>
-                        </li> -->
+                    
 
                         <li>
                             <a href="{% url 'blog' %}">Blog</a>
                         </li>
 
+                        
                         <li>
                             <a href="{% url 'about' %}">About</a>
                         </li>
@@ -523,7 +478,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     </span>
 </div>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
 
 <!--===============================================================================================-->	
 <script src="{%static 'vendor/jquery/jquery-3.2.1.min.js'%}"></script>
@@ -575,20 +531,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <script src="{%static 'vendor/sweetalert/sweetalert.min.js'%}"></script>
 <script>
 
-    // $('.js-addwish-b2').on('click', function(e){
-    //     e.preventDefault();
-    // });
-
-    // $('.js-addwish-b2').each(function(){
-    //     var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-    //     $(this).on('click', function(){
-    //         swal(nameProduct, "is added to wishlist !", "success");
-
-    //         $(this).addClass('js-addedwish-b2');
-    //         $(this).off('click');
-    //     });
-    // });
-
+   
     $('.js-addwish-detail').each(function(){
         var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
 

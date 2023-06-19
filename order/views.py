@@ -14,7 +14,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 import csv
-
 import random
 
 
@@ -97,6 +96,7 @@ def placeorder(request):
         neworder.tracking_no = trackno
         neworder.save()
 
+
         try:
             instance = UserCoupon.objects.get(user=request.user)
 
@@ -138,6 +138,7 @@ def placeorder(request):
             if float(cart_total_price) >= float(wallet.wallet):
                messages.error(request, 'Wallet does not have the required amount')
                return redirect(checkout)
+            
             wallet.wallet -= cart_total_price
             wallet.save()
                 
@@ -243,7 +244,7 @@ def sample(request):
 
 def orders(request):
     user = request.user
-    orders = Order.objects.filter(user=user)
+    orders = Order.objects.filter(user=user).order_by('-update_at')
     orderitems = OrderItem.objects.filter(order__in=orders).order_by('-order__update_at')
     context = {
         'orders': orders,
